@@ -15,10 +15,10 @@ public class Mochila {
     public static int mejorValor;
     public static int pesoFinal;
     //1 significa que está dentro de la mochila y 0 que está fuera de ella.
-    //posiciones óptimas { 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 0, 0, 0, 1, 1}  con un valor de 1458
+    //óptimo 1458
     public static void main(String[] args) {
         //Parámetros a modificar
-        int semilla = 1;
+        int semilla = 2;
         int iteraciones = 100;
         Tau = (float) 1.6;
         //Fin de parámetros a modificar
@@ -28,7 +28,10 @@ public class Mochila {
             if(capMochila>pesoMochila()+pesoObj[i])
                 mochila[i] = 1;              
         }
-        mejorMochila = mochila;
+        mejorMochila = new int[cantObj];
+        for (int j = 0; j < cantObj; j++) {
+            mejorMochila[j] = mochila[j]; 
+        }
         mejorValor = valorMochila();
         pesoFinal = pesoMochila();
         System.out.println("Mochila inicial");
@@ -37,6 +40,7 @@ public class Mochila {
         }
         System.out.println("");
         System.out.println("Valor: "+mejorValor+"   Peso: "+pesoFinal);
+        System.out.println("");
         //Generando array de probabilidades
         float[] P = new float[cantObj];
         for (int i = 1; i <= cantObj; i++) {
@@ -82,16 +86,17 @@ public class Mochila {
                     aux2++;
                 }                    
             }
-            //Elijo un objeto fuera de la mochila para ingresar
+            //Elijo un objeto fuera de la mochila para ingresar y uno de dentro para quitar
             int ingresa = random.nextInt(fueraMochila.length);
-            int[] mochilaaux = mochila;        
+            int quitar = quitarObj(objMochila, fitnessLocal, P);
             //Cambio el "peor" por uno random
-            mochila[fitnessLocal[quitarObj(objMochila, fitnessLocal, P)][0]] = 0;
+            mochila[fitnessLocal[quitar][0]] = 0;
             mochila[fueraMochila[ingresa]] = 1;
             //Si sobrepasa la capacidad máxima de la mochila vuelvo al estado anterior
-            if(pesoMochila() > capMochila)
-                mochila = mochilaaux;
-            //Por si me cabe objeto más
+            if(pesoMochila() > capMochila){
+                mochila[fitnessLocal[quitar][0]] = 1;
+                mochila[fueraMochila[ingresa]] = 0;
+            }//Por si me cabe objeto más
             else{
                 for (int j = cantObj-1; j >= 0; j--) {
                     if(mochila[j]==0){
@@ -101,7 +106,9 @@ public class Mochila {
                 }
                 //Si es mejor que nuestra mejor mochila, actualizo los resultados
                 if(valorMochila()>mejorValor){
-                    mejorMochila = mochila;
+                    for (int j = 0; j < cantObj; j++) {
+                        mejorMochila[j] = mochila[j]; 
+                    }
                     mejorValor = valorMochila();
                     pesoFinal = pesoMochila();
                 }
