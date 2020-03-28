@@ -17,9 +17,11 @@ public class Mochila {
     //1 significa que está dentro de la mochila y 0 que está fuera de ella.
     //posiciones óptimas { 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 0, 0, 0, 1, 1}  con un valor de 1458
     public static void main(String[] args) {
+        //Parámetros a modificar
         int semilla = 1;
         int iteraciones = 100;
         Tau = (float) 1.6;
+        //Fin de parámetros a modificar
         random = new Random(semilla);
         // Inicializo mochila
         for (int i = cantObj-1; i > 0; i--) {
@@ -71,6 +73,7 @@ public class Mochila {
                     }
                 }
             }
+            //Obtengo los objetos fuera de la mochila
             int[] fueraMochila = new int[cantObj - objMochila];
             int aux2 = 0;
             for (int j = 0; j < fueraMochila.length; j++) {
@@ -85,6 +88,7 @@ public class Mochila {
             //Cambio el "peor" por uno random
             mochila[fitnessLocal[quitarObj(objMochila, fitnessLocal, P)][0]] = 0;
             mochila[fueraMochila[ingresa]] = 1;
+            //Si sobrepasa la capacidad máxima de la mochila vuelvo al estado anterior
             if(pesoMochila() > capMochila)
                 mochila = mochilaaux;
             //Por si me cabe objeto más
@@ -95,6 +99,7 @@ public class Mochila {
                             mochila[j] = 1;
                     }
                 }
+                //Si es mejor que nuestra mejor mochila, actualizo los resultados
                 if(valorMochila()>mejorValor){
                     mejorMochila = mochila;
                     mejorValor = valorMochila();
@@ -125,7 +130,7 @@ public class Mochila {
         }
         return pesoMochila;
     }
-    //Elijo al componente más debil con la formúla de la ruleta
+    //Elijo al componente más debil con el método de la ruleta
     public static int quitarObj(int objMochila, int[][] fitnessLocal, float[] P){
         int peorObj = 0;
         float Aleatorio = random.nextFloat();
